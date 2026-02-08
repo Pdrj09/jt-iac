@@ -12,6 +12,13 @@ variable "alumnos" {
   
 }
 
+variable "ssh_password" {
+    description = "Contraseña para la conexion por ssh"
+    type = string
+    sensitive = true
+    default = "formacion"
+}
+
 
 # --- Red macvlan ---
 

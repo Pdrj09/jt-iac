@@ -58,3 +58,40 @@ resource "docker_image" "alumno" {
 locals {
   alumnos_list = [for nombre, ip in var.alumnos : {nombre = nombre, ip = ip}]
 }
+
+resource "docker_container" "alumno" {
+    count = length(local.alumnos_list)
+    name = "formacion-${local.alumnos_list[count.index].nombre}"
+    image = docker_image.alumno.image_id
+
+    privileged = true
+
+    env = [
+        "SSH_PASSWORD=${var.ssh_password}",
+        "ALUMNO=${local.alumnos_list[count.index].nombre}",    
+    ]
+
+    networks_advanced {
+        name = docker.docker_network.jf-tic.name
+        ipv4_address = local.alumnos_list[count.index].ip
+        aliases = [local.alumnos_list[count.index].nombre]
+    }
+
+    volumes {
+        volume_name = docker_volume.docker_data[count.index].name
+        container_path = "/var/lib/docker"
+    }
+
+    restart = "unless-stopped"
+
+    tmpfs = {
+        "/tmp" = ""
+        "/run" = ""
+        "/run/lock" = ""
+    }
+}
+
+resource "docker_volume" "docker_data" {
+  count = length(local.alumnos_list)
+  name  = "formacion-docker-${local.alumnos_list[count.index].nombre}"
+}
