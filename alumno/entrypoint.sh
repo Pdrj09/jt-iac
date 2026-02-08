@@ -15,5 +15,4 @@ done
 
 nginx
 
-echo /usr/sbin/sshd -D
-
+exec /usr/sbin/sshd -D
