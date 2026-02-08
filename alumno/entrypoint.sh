@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "root:&{SSH_PASSWORD:-formacion}" | chpasswd
+echo "root:${SSH_PASSWORD:-formacion}" | chpasswd
 
 dockerd --host=unix://var/run/docker.sock &
 

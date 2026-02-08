@@ -76,7 +76,7 @@ resource "docker_container" "alumno" {
     ]
 
     networks_advanced {
-        name = docker.docker_network.jf-tic.name
+        name = docker_network.jf-tic.name
         ipv4_address = local.alumnos_list[count.index].ip
         aliases = [local.alumnos_list[count.index].nombre]
     }

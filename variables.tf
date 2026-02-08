@@ -5,9 +5,9 @@ variable "alumnos" {
     type = map(string)
 
     default = {
-      "alumno1" = "192.168.1.201"
-      "alumno2" = "192.168.1.202"
-      "alumno3" = "192.168.1.203"
+      "alumno1" = "192.168.0.201"
+      "alumno2" = "192.168.0.202"
+      "alumno3" = "192.168.0.203"
     }
   
 }
@@ -32,11 +32,11 @@ variable "network_interface" {
 variable "network_subnet" {
     description = "Subnet de la red local"
     type = string
-    default = "192.168.1.0/24"
+    default = "192.168.0.0/24"
 }
 
 variable "network_gateway" {
     description = "Puerta de enlace (router)"
     type = string
-    default = "192.168.1.1"  
+    default = "192.168.0.1"  
 }

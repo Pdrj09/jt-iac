@@ -19,7 +19,7 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     lsb-release \
     sudo \
-    cetbot \
+    certbot \
     && rm -rd /var/lib/apt/lists/*
 
 RUN install -m 0755 -d /etc/apt/key
