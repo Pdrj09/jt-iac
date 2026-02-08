@@ -1,0 +1,14 @@
+# OpenTofu / Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfplan
+.terraform.lock.hcl
+
+# Variables con secretos
+terraform.tfvars
+
+# Sistema
+.DS_Store
+*.swp
+*~
