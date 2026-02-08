@@ -35,7 +35,7 @@ resource "docker_network" "jf-tic" {
 }
 
 #  --------------------------------------
-# |      CONTENEDOR ALUMNO               |
+# |      IMAGEN DEL ALUMNO               |
 # | Contenedor creado para cada alumno,  |
 # | cada uno configurado para montar un  |
 # | docker in docker y con un nginx      |
@@ -58,6 +58,10 @@ resource "docker_image" "alumno" {
 locals {
   alumnos_list = [for nombre, ip in var.alumnos : {nombre = nombre, ip = ip}]
 }
+
+#  --------------------------------------
+# |          CONTENEDOR ALUMNO           |
+#  --------------------------------------
 
 resource "docker_container" "alumno" {
     count = length(local.alumnos_list)
@@ -91,6 +95,7 @@ resource "docker_container" "alumno" {
     }
 }
 
+# Volumnes por alumnos 
 resource "docker_volume" "docker_data" {
   count = length(local.alumnos_list)
   name  = "formacion-docker-${local.alumnos_list[count.index].nombre}"
