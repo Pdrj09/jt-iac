@@ -2,7 +2,7 @@
 
 echo "root:&{SSH_PASSWORD:-formacion}" | chpasswd
 
-dockered --host=unix://var/run/docker.sock &
+dockerd --host=unix://var/run/docker.sock &
 
 echo "Esperando a docker..."
 for i in $(seq 1 30); do
