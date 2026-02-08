@@ -13,6 +13,12 @@ provider "docker" {
     host = "unix:///var/run/docker.sock" # socket de docker 
 }
 
+# ------------------------------------------
+# |           RED MACVLAN                   |
+# |  Cada contenedor tiene IP propia en la  |
+# |  red local, como si fuera otra máquina  |
+# ------------------------------------------
+
 resource "docker_network" "jf-tic" {
     name = "jf-tic-net"
     driver = "macvlan"
