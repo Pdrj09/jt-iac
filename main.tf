@@ -54,3 +54,7 @@ resource "docker_image" "alumno" {
         entrypoint = filemd5("${path.module}/alumno/entrypoint.sh")
     }
 }
+
+locals {
+  alumnos_list = [for nombre, ip in var.alumnos : {nombre = nombre, ip = ip}]
+}

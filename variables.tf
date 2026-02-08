@@ -1,4 +1,19 @@
-# ─── Red macvlan ───
+# --- lista de alumnos ---
+
+variable "alumnos" {
+    description = "Lista de alumnos que estan en la formacion"
+    type = map(string)
+
+    default = {
+      "alumno1" = "192.168.1.201"
+      "alumno2" = "192.168.1.202"
+      "alumno3" = "192.168.1.203"
+    }
+  
+}
+
+
+# --- Red macvlan ---
 
 variable "network_interface" {
     description = "Interfaz red fisica a la que se conectara"
