@@ -33,3 +33,24 @@ resource "docker_network" "jf-tic" {
     }
   
 }
+
+#  --------------------------------------
+# |      CONTENEDOR ALUMNO               |
+# | Contenedor creado para cada alumno,  |
+# | cada uno configurado para montar un  |
+# | docker in docker y con un nginx      |
+#  --------------------------------------
+
+resource "docker_image" "alumno" {
+    name = "alunmno-container"
+
+    build {
+        context = "${path.module}/alumno"
+        tag = ["formacion-alumno:latest"]
+    }
+
+    triggers = {
+        dockerfile = filemd5("${path.module}/alumno/Dockerfile")
+        entrypoint = filemd5("${path.module}/alumno/entrypoint.sh")
+    }
+}
