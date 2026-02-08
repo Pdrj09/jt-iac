@@ -15,7 +15,7 @@ provider "docker" {
 
 resource "docker_network" "jf-tic" {
     name = "jf-tic-net"
-    driver = "maclan"
+    driver = "macvlan"
 
     options = {
         parent = var.network_interface
