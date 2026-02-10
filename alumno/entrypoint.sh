@@ -3,6 +3,7 @@
 echo "root:${SSH_PASSWORD:-formacion}" | chpasswd
 
 mkdir -p /run/sshd
+ssh-keygen -A
 
 dockerd --host=unix:///var/run/docker.sock &
 
