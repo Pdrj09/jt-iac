@@ -25,7 +25,7 @@ variable "ssh_password" {
 variable "network_interface" {
     description = "Interfaz red fisica a la que se conectara"
     type = string
-    default = "enp3s0"
+    default = "wlp98s0"
   
 }
 
