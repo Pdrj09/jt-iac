@@ -2,7 +2,7 @@ output "conexiones" {
     description = "Datos de conexión de cada alumno"
     value = {
         for nombre, ip in var.alumnos : nombre => {
-            ssh  = "ssh root@${ip}"
+            ssh  = "ssh ${nombre}@${ip}"
             web  = "http://${ip}"
             pass = var.ssh_password
         }
@@ -20,7 +20,7 @@ output "resumen" {
         ],
         [
             for nombre, ip in var.alumnos :
-            "║ ${format("%-14s", nombre)} ║ ${format("%-16s", ip)} ║ ssh root@${format("%-8s", ip)} ║"
+            "║ ${format("%-14s", nombre)} ║ ${format("%-16s", ip)} ║ ssh ${nombre}@${format("%-8s", ip)} ║"
         ],
         [
             "╚════════════════╩══════════════════╩════════════════════╝",

@@ -1,21 +1,17 @@
 #!/bin/bash
 
+# Crear usuario del alumno
+useradd -m -s /bin/bash "${ALUMNO}"
+echo "${ALUMNO}:${SSH_PASSWORD:-formacion}" | chpasswd
+usermod -aG sudo,docker "${ALUMNO}"
+echo "${ALUMNO} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${ALUMNO}
+
+# Password de root (para sudo manual si hace falta)
 echo "root:${SSH_PASSWORD:-formacion}" | chpasswd
 
-mkdir -p /run/sshd
+# SSH host keys
 ssh-keygen -A
+mkdir -p /run/sshd
 
-dockerd --host=unix:///var/run/docker.sock &
-
-echo "Esperando a docker..."
-for i in $(seq 1 30); do
-    if docker info &>/dev/null; then
-        echo "ready ;)"
-        break
-    fi 
-        sleep 1
-done
-
-nginx
-
-exec /usr/sbin/sshd -D
+# Arrancar systemd como PID 1
+exec /sbin/init

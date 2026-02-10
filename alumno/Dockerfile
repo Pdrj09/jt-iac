@@ -2,8 +2,10 @@ FROM ubuntu:24.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# ---- cosas basicas para el funcionamiento -----
+# ---- paquetes base + systemd -----
 RUN apt-get update && apt-get install -y \
+    systemd \
+    systemd-sysv \
     openssh-server \
     nginx \
     curl \
@@ -20,9 +22,16 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     sudo \
     certbot \
-    && rm -rd /var/lib/apt/lists/*
+    && rm -rf /var/lib/apt/lists/*
 
-RUN install -m 0755 -d /etc/apt/key
+# Limpiar units de systemd que no hacen falta en Docker
+RUN (cd /lib/systemd/system/sysinit.target.wants/; for i in *; do [ "$i" = "systemd-tmpfiles-setup.service" ] || rm -f "$i"; done); \
+    rm -f /lib/systemd/system/multi-user.target.wants/*; \
+    rm -f /etc/systemd/system/*.wants/*; \
+    rm -f /lib/systemd/system/local-fs.target.wants/*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*udev*; \
+    rm -f /lib/systemd/system/sockets.target.wants/*initctl*; \
+    rm -f /lib/systemd/system/basic.target.wants/*
 
 # Instalacion de Docker
 RUN install -m 0755 -d /etc/apt/keyrings && \
@@ -36,18 +45,14 @@ RUN install -m 0755 -d /etc/apt/keyrings && \
     apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin && \
     rm -rf /var/lib/apt/lists/*
 
-
 # conf ssh
 RUN mkdir -p /run/sshd && \
+    ssh-keygen -A && \
     echo 'PermitRootLogin yes' >> /etc/ssh/sshd_config && \
     echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config
 
-
-# Limpiar la conf de nginx
+# Nginx: config base
 RUN rm -f /etc/nginx/sites-enabled/default
-
-
-# Crear conf base que incluya sites-enabled
 RUN echo 'worker_processes auto;\n\
 events { worker_connections 1024; }\n\
 http {\n\
@@ -58,9 +63,29 @@ http {\n\
     include /etc/nginx/sites-enabled/*;\n\
 }' > /etc/nginx/nginx.conf
 
+# Nginx: site por defecto para que escuche en el 80
+RUN echo 'server {\n\
+    listen 80 default_server;\n\
+    root /var/www/html;\n\
+    index index.html;\n\
+    server_name _;\n\
+    location / {\n\
+        try_files $uri $uri/ =404;\n\
+    }\n\
+}' > /etc/nginx/sites-enabled/default.conf
+
+# Pagina web por defecto
+RUN mkdir -p /var/www/html && \
+    echo '<h1>Formacion</h1>' > /var/www/html/index.html
+
+# Habilitar servicios para systemd
+RUN systemctl enable ssh nginx docker
+
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 EXPOSE 22 80 443
+
+STOPSIGNAL SIGRTMIN+3
 
 ENTRYPOINT ["/entrypoint.sh"]

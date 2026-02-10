@@ -66,6 +66,7 @@ locals {
 resource "docker_container" "alumno" {
     count = length(local.alumnos_list)
     name = "formacion-${local.alumnos_list[count.index].nombre}"
+    hostname = "formacion-${local.alumnos_list[count.index].nombre}"
     image = docker_image.alumno.image_id
 
     privileged = true
